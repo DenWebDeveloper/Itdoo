@@ -33,7 +33,9 @@ app.use((ctx, next) => (ctx.method === 'POST' || ctx.url === '/secret-path'
   : next()));
 app
   .use(router.routes());
-app.listen(3000);
+
+const port = process.env.PORT || 3000;
+app.listen(port);
 // end Server
 
 bot.use(async (ctx, next) => {
