@@ -24,6 +24,9 @@
   "homepage": "https://github.com/DenWebDeveloper/Itdoo#readme",
   "dependencies": {
     "dotenv": "^6.1.0",
+    "koa": "^2.6.1",
+    "koa-body": "^4.0.4",
+    "koa-router": "^7.4.0",
     "lowdb": "^1.0.0",
     "nodemon": "^1.18.4",
     "request": "^2.88.0",

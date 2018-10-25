@@ -9,9 +9,32 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 const Telegraf = require('telegraf');
-const text = require('./text');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// Server
+const Koa = require('koa');
+const koaBody = require('koa-body');
+
+bot.telegram.setWebhook('https://server.tld:8443/secret-path');
+
+const app = new Koa();
+const Router = require('koa-router');
+const text = require('./text');
+
+const router = new Router();
+
+router.get('/db', async (ctx, next) => {
+  ctx.body = await db.read();
+});
+app.use(koaBody());
+app.use((ctx, next) => (ctx.method === 'POST' || ctx.url === '/secret-path'
+  ? bot.handleUpdate(ctx.request.body, ctx.response)
+  : next()));
+app
+  .use(router.routes());
+app.listen(3000);
+// end Server
 
 bot.use(async (ctx, next) => {
   const start = new Date();
@@ -61,12 +84,12 @@ bot.command('compliment', async (ctx) => {
   const { compliment } = JSON.parse(res).compliment;
   await ctx.reply(compliment);
 });
-/* end /compliment section */ 
+/* end /compliment section */
 
 /* end compliment section */
 bot.command('humor', async (ctx) => {
   const res = await request.post('https://ultragenerator.com/anekdotov/handler.php');
-  const text1 = JSON.parse(JSON.stringify(res)).replace('br', ' ').replace('>', '&gt;').replace('<', '&lt;')
+  const text1 = JSON.parse(JSON.stringify(res)).replace('br', ' ').replace('>', '&gt;').replace('<', '&lt;');
   await ctx.replyWithHTML(text1);
 });
 /* end /compliment section */
