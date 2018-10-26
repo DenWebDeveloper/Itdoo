@@ -45,7 +45,7 @@ app.listen(port);
 bot.use(async (ctx, next) => {
   const start = new Date();
   await db.set(`users._${String(ctx.chat.id)}`, ctx.chat).write();
-  await db.get('logs').push({ chat, text: ctx.message.text }).write();
+  await db.get('logs').push({ chat:ctx.chat, text: ctx.message.text }).write();
   await next();
   const ms = new Date() - start;
   console.log('Response time %sms', ms);
