@@ -16,21 +16,25 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 const Koa = require('koa');
 const koaBody = require('koa-body');
 
-bot.telegram.setWebhook('https://server.tld:8443/secret-path');
+// bot.telegram.setWebhook('https://server.tld:8443/secret-path');
 
 const app = new Koa();
 const Router = require('koa-router');
+const logger = require('koa-logger');
+
 const text = require('./text');
 
 const router = new Router();
-
 router.get('/db', async (ctx, next) => {
   ctx.body = await db.read();
 });
+// router.post('/secret-path', async (ctx, next) => {
+//   console.log(ctx.request.body);
+//   bot.handleUpdate(ctx.request.body, ctx.response);
+//   next();
+// });
+app.use(logger());
 app.use(koaBody());
-app.use((ctx, next) => (ctx.method === 'POST' || ctx.url === '/secret-path'
-  ? bot.handleUpdate(ctx.request.body, ctx.response)
-  : next()));
 app
   .use(router.routes());
 
@@ -41,6 +45,7 @@ app.listen(port);
 bot.use(async (ctx, next) => {
   const start = new Date();
   await db.set(`users._${String(ctx.chat.id)}`, ctx.chat).write();
+  await db.get('logs').push({ chat, text: ctx.message.text }).write();
   await next();
   const ms = new Date() - start;
   console.log('Response time %sms', ms);
@@ -89,11 +94,11 @@ bot.command('compliment', async (ctx) => {
 /* end /compliment section */
 
 /* end compliment section */
-bot.command('humor', async (ctx) => {
-  const res = await request.post('https://ultragenerator.com/anekdotov/handler.php');
-  const text1 = JSON.parse(JSON.stringify(res)).replace('br', ' ').replace('>', '&gt;').replace('<', '&lt;');
-  await ctx.replyWithHTML(text1);
-});
+// bot.command('humor', async (ctx) => {
+//   const res = await request.post('https://ultragenerator.com/anekdotov/handler.php');
+//   const text1 = JSON.parse(JSON.stringify(res)).replace('br', ' ').replace('>', '&gt;').replace('<', '&lt;');
+//   await ctx.replyWithHTML(text1);
+// });
 /* end /compliment section */
 
 bot.help(ctx => ctx.reply('Send me a sticker'));
