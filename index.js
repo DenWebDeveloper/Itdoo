@@ -52,6 +52,7 @@ bot.use(async (ctx, next) => {
 });
 
 bot.start(async (ctx) => {
+  console.log(ctx.chat);
   await ctx.reply(`Привіт, ${ctx.chat.first_name}`);
   await ctx.reply('Приємно познайомитися');
   await ctx.reply(text.start);
