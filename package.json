@@ -29,6 +29,7 @@
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "lowdb": "^1.0.0",
+    "text-to-image":"*",
     "nodemon": "^1.18.4",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
